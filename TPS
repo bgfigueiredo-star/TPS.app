@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TPS.app - Gestão de Filas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-600">TPS.app</h1>
+      <nav class="space-x-6 hidden md:block">
+        <a href="#funciona" class="hover:text-blue-600">Como Funciona</a>
+        <a href="#recursos" class="hover:text-blue-600">Recursos</a>
+        <a href="#painel" class="hover:text-blue-600">Painel</a>
+        <a href="#status" class="hover:text-blue-600">Status da Fila</a>
+        <a href="#contato" class="hover:text-blue-600">Contato</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-500 text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Gerencie filas de forma simples e rápida</h2>
+      <p class="text-lg mb-8">Com o TPS.app, seu cliente entra na fila escaneando um QR Code e acompanha tudo no celular.</p>
+      <button onclick="gerarQRCode()" class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg shadow hover:bg-gray-100">Gerar QR Code grátis</button>
+      <div id="qrcode" class="mt-6 flex justify-center"></div>
+      <p class="mt-6">QR Code Público:</p>
+      <div id="qrcode-publico" class="flex justify-center mt-2"></div>
+    </div>
+  </section>
+
+  <!-- Como Funciona -->
+  <section id="funciona" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center mb-12">Como Funciona</h3>
+      <div class="grid md:grid-cols-3 gap-8 text-center">
+        <div>
+          <div class="bg-blue-100 text-blue-600 w-16 h-16 flex items-center justify-center rounded-full mx-auto mb-4 text-2xl font-bold">1</div>
+          <h4 class="font-semibold mb-2">Crie sua fila</h4>
+          <p>Gere um QR Code exclusivo para seu estabelecimento em segundos.</p>
+        </div>
+        <div>
+          <div class="bg-blue-100 text-blue-600 w-16 h-16 flex items-center justify-center rounded-full mx-auto mb-4 text-2xl font-bold">2</div>
+          <h4 class="font-semibold mb-2">Cliente entra na fila</h4>
+          <p>O cliente escaneia o QR Code e recebe sua posição e tempo estimado.</p>
+        </div>
+        <div>
+          <div class="bg-blue-100 text-blue-600 w-16 h-16 flex items-center justify-center rounded-full mx-auto mb-4 text-2xl font-bold">3</div>
+          <h4 class="font-semibold mb-2">Notificações</h4>
+          <p>O cliente é avisado quando estiver próximo de ser atendido.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recursos -->
+  <section id="recursos" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center mb-12">Recursos do TPS.app</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h4 class="font-semibold mb-2">Sem instalação</h4>
+          <p>Funciona direto no navegador, sem necessidade de baixar apps.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h4 class="font-semibold mb-2">Painel simples</h4>
+          <p>Gerencie sua fila de qualquer dispositivo, de forma intuitiva.</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h4 class="font-semibold mb-2">Tela pública</h4>
+          <p>Mostre o status da fila em uma TV ou monitor para seus clientes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Painel de Gerenciamento -->
+  <section id="painel" class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center mb-6">Painel de Gerenciamento</h3>
+      <div class="bg-gray-100 p-6 rounded-lg shadow">
+        <h4 class="font-semibold mb-4">Fila Atual</h4>
+        <ul id="listaFila" class="space-y-2 mb-4"></ul>
+        <div class="flex space-x-2">
+          <input id="nomeCliente" type="text" placeholder="Nome do cliente" class="flex-1 border border-gray-300 rounded-lg px-4 py-2" />
+          <button onclick="adicionarCliente()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Adicionar</button>
+          <button onclick="chamarProximo()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Chamar Próximo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Status da Fila (público) com animação e contador -->
+  <section id="status" class="py-16 bg-gray-50">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h3 class="text-3xl font-bold mb-6">Status da Fila</h3>
+      <div class="bg-white p-6 rounded-lg shadow">
+        <p class="text-lg">Sua posição na fila:</p>
+        <p id="posicaoCliente" class="text-5xl font-bold text-blue-600 my-4 transition-all duration-500">-</p>
+        <p class="text-lg">Tempo estimado de espera:</p>
+        <p id="tempoEstimado" class="text-xl font-semibold text-gray-700 transition-all duration-500">-</p>
+        <p id="contadorRegressivo" class="text-lg font-semibold text-green-600 mt-4"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contato -->
+  <section id="contato" class="py-16 bg-white">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h3 class="text-3xl font-bold mb-6">Fale Conosco</h3>
+      <p class="mb-8">Tem dúvidas ou quer saber mais? Entre em contato com a equipe TPS.app.</p>
+      <form class="space-y-4">
+        <input type="text" placeholder="Seu nome" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        <input type="email" placeholder="Seu e-mail" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        <textarea placeholder="Sua mensagem" class="w-full border border-gray-300 rounded-lg px-4 py-2" rows="4"></textarea>
+        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700">Enviar Mensagem</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 text-center">
+    <p>&copy; 2025 TPS.app - Todos os direitos reservados</p>
+  </footer>
+
+  <script>
+    let fila = [];
+
+    // QR Code privado
+    function gerarQRCode() {
+      document.getElementById("qrcode").innerHTML = "";
+      const linkFila = `#status`;
+      new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href.split('#')[0] + linkFila,
+        width: 200,
+        height: 200,
+      });
+    }
+
+    // QR Code público
+    const linkPublico = window.location.href.split('#')[0];
+    new QRCode(document.getElementById("qrcode-publico"), {
+      text: linkPublico,
+      width: 200,
+      height: 200,
+    });
+
+    function adicionarCliente() {
+      const nome = document.getElementById("nomeCliente").value.trim();
+      if (nome) {
+        fila.push(nome);
+        atualizarListaFila();
+        atualizarStatusPublico();
+        document.getElementById("nomeCliente").value = "";
+      }
+    }
+
+    function chamarProximo() {
+      if (fila.length > 0) {
+        const proximo = fila.shift();
+        alert(`Chamando: ${proximo}`);
+        atualizarListaFila();
+        atualizarStatusPublico();
+      }
+    }
+
+    function atualizarListaFila() {
+      const lista = document.getElementById("listaFila");
+      lista.innerHTML = "";
+      fila.forEach((cliente, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1} - ${cliente}`;
+        li.className = "bg-white p-2 rounded shadow";
+        lista.appendChild(li);
+      });
+    }
+
+    function atualizarStatusPublico() {
+      const posicao = fila.length > 0 ? 1 : '-';
+      const tempo = fila.length > 0 ? fila.length * 5 : '-';
+      const posicaoEl = document.getElementById("posicaoCliente");
+      const tempoEl = document.getElementById("tempoEstimado");
+      posicaoEl.textContent = posicao;
+      tempoEl.textContent = tempo === '-' ? '-' : `${tempo} minutos`;
+      iniciarContador(tempo);
+    }
+
+    let contadorInterval;
+    function iniciarContador(minutos) {
+      clearInterval(contadorInterval);
+      if(minutos === '-' || minutos === 0) {
+        document.getElementById("contadorRegressivo").textContent = '';
+        return;
+      }
+      let tempoRestante = minutos * 60;
+      const contadorEl = document.getElementById("contadorRegressivo");
+      contadorEl.textContent = `Tempo restante: ${Math.floor(tempoRestante/60)}m ${tempoRestante%60}s`;
+      contadorInterval = setInterval(() => {
+        tempoRestante--;
+        if(tempoRestante <= 0){
+          clearInterval(contadorInterval);
+          contadorEl.textContent = 'É sua vez!';
+        } else {
+          contadorEl.textContent = `Tempo restante: ${Math.floor(tempoRestante/60)}m ${tempoRestante%60}s`;
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
